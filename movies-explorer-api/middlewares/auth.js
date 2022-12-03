@@ -6,17 +6,15 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 
 module.exports = (req, res, next) => {
   const devTokenSecret = 'dev-secret-key';
-  const { authorization } = req.headers;
+  const cookieWithToken = req.cookies.jwt;
 
-  if (!authorization || !authorization.startsWith('Bearer ')) {
+  if (!cookieWithToken) {
     return next(new UnauthorizedError('авторизация не пройдена'));
   }
-
-  const token = authorization.replace('Bearer ', '');
   let payload;
 
   try {
-    payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : devTokenSecret);
+    payload = jwt.verify(cookieWithToken, NODE_ENV === 'production' ? JWT_SECRET : devTokenSecret);
   } catch {
     return next(new UnauthorizedError('авторизация не пройдена'));
   }
