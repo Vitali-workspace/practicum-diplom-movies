@@ -12,7 +12,7 @@ module.exports.validatorCreateMovie = celebrate({
     image: Joi.string().pattern(regUrl).required(),
     trailerLink: Joi.string().pattern(regUrl).required(),
     thumbnail: Joi.string().pattern(regUrl).required(),
-    movieId: Joi.number().integer().required(),
+    movieId: Joi.string().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
   }),
@@ -34,11 +34,9 @@ module.exports.validatorRegistration = celebrate({
 });
 
 module.exports.validatorDeleteMovie = celebrate({
-  body: Joi.object().keys({
-    params: Joi.object().keys(
-      { _id: Joi.string().length(24).hex().required() },
-    ),
-  }),
+  params: Joi.object().keys(
+    { _id: Joi.string().required() },
+  ),
 });
 
 module.exports.validatorUpdateUser = celebrate({
