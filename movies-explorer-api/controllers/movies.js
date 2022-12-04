@@ -54,22 +54,27 @@ module.exports.createMovie = (req, res, next) => {
 
 
 module.exports.removeMovie = (req, res, next) => {
-  const owner = req.user._id;
-  const id = req.params._id;
+  const ownerFilm = req.user._id;
+  const film = req.params._id;
 
-  Movie.findById(id)
+  Movie.findOne({ movieId: film })
     .then((movie) => {
       if (!movie) {
-        next(new PageNotFoundError('Запрошенный id не найден'));
-        return;
+        return next(new PageNotFoundError('Запрошенный фильм не найден'));
       }
 
-      if (owner === movie.owner.toString()) {
-        movie.remove();
-        return;
+      if (ownerFilm === movie.owner.toString()) {
+        res.send({ message: 'Пользователь удалил фильм' });
+        return movie.remove();
       }
-      next(new ForbiddenError('Нет прав на удаление фильма'));
+
+      return next(new ForbiddenError('Нет прав на удаление чужого фильма'));
     })
-    .then((movie) => res.send(movie))
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('ошибка в запросе на удаление фильма'));
+      } else {
+        next(err);
+      }
+    });
 };

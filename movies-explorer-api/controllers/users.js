@@ -89,5 +89,5 @@ module.exports.login = (req, res, next) => {
 module.exports.logout = (req, res) => {
   res.cookie('jwt', '', { maxAge: 0, httpOnly: true });
   res.clearCookie('jwt');
-  return res.send({ message: 'Пользователь вышел и куки удалены' });
+  return res.send({ message: 'Пользователь вышел из аккаунта и куки удалены' });
 };
